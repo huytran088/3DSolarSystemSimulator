@@ -51,8 +51,10 @@ bool Game::initializeGame()
 	bool windowInit = initializeRenderWindow();
 	bool graphicsInit = initializeGraphics();
 
+	bool soundInit = SoundEngine::Init();
+
 	// Check if all libraries initialized correctly
-	if (windowInit && graphicsInit )
+	if (windowInit && graphicsInit && soundInit)
 	{
 		// Set the owner of all the GameObject (temporary)
 		GameObject::SetOwningGame(this);
@@ -264,6 +266,9 @@ void Game::updateGame()
 		// Start an update traversal of all SceneGrapNode/GameObjects in the game
 		this->update(deltaTime);
 
+		// Update the sound engine
+		SoundEngine::Update(deltaTime);
+
 		// Add pending, delete removed, and reparent
 		GameObject::ManageGameObjectChanges(); 
 
@@ -313,6 +318,9 @@ void Game::shutdown()
 
 	// Delete all shader programs that have been created
 	deleteAllShaderPrograms();
+
+	// Stop the Sound Engine
+	SoundEngine::Stop();
 
 } // end shutDown
 

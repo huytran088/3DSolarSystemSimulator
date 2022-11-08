@@ -7,7 +7,7 @@ class MyGame : public Game
 
 public:
 
-	MyGame(std::string windowTitle = "Project 2")
+	MyGame(std::string windowTitle = "Project 3")
 		: Game(windowTitle)
 	{}
 
@@ -23,7 +23,7 @@ protected:
 		};
 
 		// Build the shader program
-		GLuint shaderProgram = BuildShaderProgram(shaders);
+		GLuint shaderProgram = BuildShaderProgram(shaders);	
 
 		// Set up the uniform bufferes and blocks
 		SharedMaterials::setUniformBlockForShader(shaderProgram);
@@ -31,58 +31,33 @@ protected:
 		SharedLighting::setUniformBlockForShader(shaderProgram);
 
 		// Set the clear color for the rendering window
-		glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 		// Create a container to hold the box
 		GameObject* firstGameObject = new GameObject(); //******************* Week 8 ********************
 
 		// Create a "blue" material for a cylinder
-		Material cylinderMat;
-		cylinderMat.diffuseMat = BLUE_RGBA;
+		Material sphereMat;
+		sphereMat.diffuseMat = BLUE_RGBA;
 
-		// Assign the texture as the diffuse texture for the cylinder
-		cylinderMat.setDiffuseTexture(Texture::GetTexture("Textures/tanjiro.png")->getTextureObject());
+		// Assign the texture as the diffuse texture for the sphere
+		sphereMat.setDiffuseTexture(Texture::GetTexture("Textures/sun.jpg")->getTextureObject());
 
-		// Instantiate a cylinder shaped mesh
-		CylinderMeshComponent* cylinder = new CylinderMeshComponent(shaderProgram, cylinderMat);
+		// Instantiate a sphere shaped mesh
+		auto* sphere = new SphereMeshComponent(shaderProgram, sphereMat);
 
-		// Add the box to a GameObject
-		firstGameObject->addComponent(cylinder); 
+		// Add the sphere to a GameObject
+		firstGameObject->addComponent(sphere); 
 		firstGameObject->addComponent(new ArrowRotateComponent(100));
 		firstGameObject->addComponent(new MakeVisableComponent(GLFW_KEY_C));
 		firstGameObject->addComponent(new ContinuousRotateComponent(20.0f, UNIT_Z_V3));
 
-		// Second Game object
-		GameObject* secondGameObject = new GameObject();	
-		auto* carModel = new ModelMeshComponent("My_object/Porsche_911_GT2.obj", shaderProgram);
-		//catModel->setModelScale(5.0f);
-		// Loading one of the jet models to the second game object
-		secondGameObject->addComponent(carModel);
-		secondGameObject->addComponent(new TranslateComponent(vec3(1.0f, 1.0f, 0.0f)));
-		secondGameObject->addComponent(new SteerComponent(30.0f));
-		
-		//secondGameObject->addComponent(new WaypointComponent(waypoints, 5.0f));
-		// Third game object
-		GameObject* thirdGameObject = new GameObject();
-
-		// Create a "red" material for a sphere
-		Material sphereMat;
-		sphereMat.diffuseMat = RED_RGBA;
-		// Instantiate a sphere shaped mesh component
-		auto* sphere = new SphereMeshComponent(shaderProgram, sphereMat, 3.0f);
-
-		// Add the sphere to a GameObject
-		thirdGameObject->addComponent(sphere);
-		thirdGameObject->addComponent(new MakeVisableComponent(GLFW_KEY_V));
 		// Waypoints
 		std::vector<vec3> waypoints;
 		waypoints.push_back(vec3(2.0f, 0.0f, 2.0f));
 		waypoints.push_back(vec3(0.0f, 0.0f, 2.0f));
 		waypoints.push_back(vec3(-2.0f, 0.0f, 3.0f));
 		waypoints.push_back(vec3(-3.0f, 0.0f, -2.0f));
-		// Add a WaypointComponent
-		thirdGameObject->addComponent(new WaypointComponent(waypoints));
-		//firstGameObject->addComponent(new SteeringComponent(waypoints));
 
 		// Light object
 		GameObject* lightObject = new GameObject();  
@@ -120,20 +95,21 @@ protected:
 		camera2->setViewPort(0.0f, 0.7f, 0.3f, 0.3f);
 		cameraObject2->addComponent(camera2);
 
+		// Sound components for the sun
+		auto* soundSource = new SoundSourceComponent("Sounds/ambient.wav");
+		soundSource->play();
+		soundSource->setLooping(true);
+		auto* soundListener = new SoundListenerComponent();
+		firstGameObject->addComponent(soundSource);
+
 		// Add the game objects to the game
 		this->addChildGameObject(firstGameObject);
-		this->addChildGameObject(secondGameObject);
-		this->addChildGameObject(thirdGameObject);
 		this->addChildGameObject(lightObject);
-		// Attach the first camera to the car
-		secondGameObject->addChildGameObject(cameraObject1);
+		this->addChildGameObject(cameraObject1);
 		this->addChildGameObject(cameraObject2);
-
 
 		// Rotate the box game object that contains the cube
 		firstGameObject->setRotation(glm::rotate(PI / 4.0f, UNIT_Y_V3)); //******************* Week 8 ********************
-		secondGameObject->setPosition(vec3(3.0f, 0.0f, 4.0f));
-		thirdGameObject->setPosition(waypoints[0]);
 		lightObject->setPosition(vec3(1.0f, 5.0f, 0.0f));
 		// Set the position/rotation of the camera
 		cameraObject1->setPosition(vec3(0.0f, 15.0f, 0.0f), LOCAL);

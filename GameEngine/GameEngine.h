@@ -17,8 +17,8 @@
 #include "ModelMeshComponent.h"
 #include "SphereMeshComponent.h"
 #include "CylinderMeshCompnent.h"
-// Movement
 
+// Movement
 #include "ArrowRotateComponent.h"
 #include "MakeVisableComponent.h"
 #include "TranslateComponent.h"
@@ -35,4 +35,8 @@
 // Camera
 #include "CameraComponent.h"
 
+// Sound
+#include "SoundEngine.h"
+#include "SoundListenerComponent.h"
+#include "SoundSourceComponent.h"
 
