@@ -175,5 +175,9 @@ protected:
 
 	ALuint buffer;
 	ALuint source;
+
+	float refDistance;
+	float rollOffFactor;
+	float maxDistance;
 };
 
