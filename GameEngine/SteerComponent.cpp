@@ -12,12 +12,12 @@ void SteerComponent::update(const float& deltaTime)
 
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_RIGHT)) {
 		//cout << "right" << endl;
-		newFwd = (glm::rotate(glm::radians(turnRate) * deltaTime, UNIT_Y_V3) * fwd).xyz;
+		newFwd = (glm::rotate(glm::radians(-turnRate) * deltaTime, UNIT_Y_V3) * fwd).xyz;
 
 	}
 	else if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_LEFT)) {
 		//cout << "left" << endl;
-		newFwd = (glm::rotate(glm::radians(-turnRate) * deltaTime, UNIT_Y_V3) * fwd).xyz;
+		newFwd = (glm::rotate(glm::radians(turnRate) * deltaTime, UNIT_Y_V3) * fwd).xyz;
 
 	}
 
