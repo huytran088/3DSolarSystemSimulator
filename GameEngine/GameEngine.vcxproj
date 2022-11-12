@@ -156,6 +156,7 @@
     <ClInclude Include="SoundEngine.h" />
     <ClInclude Include="SoundListenerComponent.h" />
     <ClInclude Include="SoundSourceComponent.h" />
+    <ClInclude Include="SpaceTravelComponent.h" />
     <ClInclude Include="SphereMeshComponent.h" />
     <ClInclude Include="SpinComponent.h" />
     <ClInclude Include="SpotLightComponent.h" />
@@ -193,6 +194,7 @@
     <ClCompile Include="SoundEngine.cpp" />
     <ClCompile Include="SoundListenerComponent.cpp" />
     <ClCompile Include="SoundSourceComponent.cpp" />
+    <ClCompile Include="SpaceTravelComponent.cpp" />
     <ClCompile Include="SphereMeshComponent.cpp" />
     <ClCompile Include="SpinComponent.cpp" />
     <ClCompile Include="SpotLightComponent.cpp" />

@@ -60,12 +60,12 @@ protected:
 		//******************************************* Earth
 		// Create a empty spin GameObject
 		auto* earthOrbitGO = new GameObject();
-		earthOrbitGO->addComponent(new SpinComponent(1.14f));
+		earthOrbitGO->addComponent(new SpinComponent(11.4f));
 		
 		// Add the empty translate GO to the earth
 		auto* earthLocationGameObject = new GameObject();
 		earthOrbitGO->addChildGameObject(earthLocationGameObject);
-		earthLocationGameObject->setPosition(vec3(17.5f, 0.0f, 0.0f), LOCAL);
+		earthLocationGameObject->setPosition(vec3(26.25f, 0.0f, 0.0f), LOCAL);
 
 		
 		// Create a container to hold the earth
@@ -91,7 +91,7 @@ protected:
 		// Add the empty spin GO to the moon
 		auto* moonOrbitGO = new GameObject();
 		earthLocationGameObject->addChildGameObject(moonOrbitGO);
-		moonOrbitGO->addComponent(new SpinComponent(-15.24f));
+		moonOrbitGO->addComponent(new SpinComponent(-152.4f));
 
 		auto* moonGO = new GameObject();
 		moonOrbitGO->addChildGameObject(moonGO);
@@ -111,12 +111,12 @@ protected:
 		//******************************************* Mars
 		// Add the empty spin to Mars
 		auto* marsOrbitGO = new GameObject();
-		marsOrbitGO->addComponent(new SpinComponent(0.61f));
+		marsOrbitGO->addComponent(new SpinComponent(6.1f));
 
 		// Add the empty translate GO to the earth
 		auto* marsLocationGameObject = new GameObject();
 		marsOrbitGO->addChildGameObject(marsLocationGameObject);
-		marsLocationGameObject->setPosition(vec3(25.0f, 0.0f, 0.0f), LOCAL);
+		marsLocationGameObject->setPosition(vec3(37.5f, 0.0f, 0.0f), LOCAL);
 
 
 		// Create a container to hold the earth
@@ -163,7 +163,7 @@ protected:
 		// Add the empty spin GO to the moon
 		auto* deimosOrbitGO = new GameObject();
 		marsLocationGameObject->addChildGameObject(deimosOrbitGO);
-		deimosOrbitGO->addComponent(new SpinComponent(-184.5f));
+		deimosOrbitGO->addComponent(new SpinComponent(-18.45f));
 
 		auto* deimosGO = new GameObject();
 		deimosOrbitGO->addChildGameObject(deimosGO);
@@ -183,12 +183,12 @@ protected:
 		//******************************************* Venus
 		// Add the empty spin to Venus
 		auto* venusOrbitGO = new GameObject();
-		venusOrbitGO->addComponent(new SpinComponent(1.824f));
+		venusOrbitGO->addComponent(new SpinComponent(18.24f));
 
 		// Add the empty translate GO to the earth
 		auto* venusLocationGameObject = new GameObject();
 		venusOrbitGO->addChildGameObject(venusLocationGameObject);
-		venusLocationGameObject->setPosition(vec3(11.67f, 0.0f, 0.0f), LOCAL);
+		venusLocationGameObject->setPosition(vec3(17.5f, 0.0f, 0.0f), LOCAL);
 
 
 		// Create a container to hold the earth
@@ -212,16 +212,29 @@ protected:
 
 		//******************************************* Spaceship
 		auto* shipGO = new GameObject();
-		auto* shipRotGO = new GameObject();
-		shipGO->addChildGameObject(shipRotGO);
-		shipRotGO->setRotation(glm::rotate(-PI_OVER_2, UNIT_X_V3), LOCAL);
+		auto* shipLocationGO = new GameObject();
+		shipGO->addChildGameObject(shipLocationGO);
+		shipLocationGO->setRotation(glm::rotate(-PI_OVER_2, UNIT_X_V3), LOCAL);
 		//shipGO->setScale(vec3(0.5f, 0.5f, 0.5f), LOCAL);
 		auto* shipModel = new ModelMeshComponent("jet_models/F-15C_Eagle.3ds", shaderProgram);
-		shipRotGO->addComponent(shipModel);
+		shipLocationGO->setScale(vec3(0.7f, 0.7f, 0.7f));
+		shipLocationGO->addComponent(shipModel);
 		shipGO->addComponent(new TranslateComponent(vec3(3.0f, 0.0f, 0.0f)));\
 		shipGO->addComponent(new SteerComponent(45.0f));
 		/*******************************************/
-	
+
+		//******************************************* Space Travel
+		// Waypoints of planets
+		std::vector<GameObject*> solarWaypoints;
+		// Push back the location of the ship, the sun, and the planets
+		solarWaypoints.push_back(shipGO);
+		solarWaypoints.push_back(sunGO);
+		solarWaypoints.push_back(earthGO);
+		solarWaypoints.push_back(marsGO);
+		solarWaypoints.push_back(venusGO);
+		SpaceTravelComponent* solarTravel = new SpaceTravelComponent(solarWaypoints, vec3(5.0f, 0.0f, 0.0f));
+		shipGO->addComponent(solarTravel);
+		/*******************************************/
 
 		// Light object
 		GameObject* lightObject = new GameObject();  
@@ -315,9 +328,9 @@ protected:
 		//shipGO->setRotation(glm::rotate(PI, UNIT_X_V3)* glm::rotate(PI, UNIT_Y_V3));
 		//lightObject->setPosition(vec3(0.0f, 0.0f, 0.0f), WORLD);
 		// Set the position/rotation of the camera
-		cameraObject1->setPosition(vec3(0.0f, 30.0f, 0.0f));
+		cameraObject1->setPosition(vec3(0.0f, 40.0f, 0.0f));
 		cameraObject1->setRotation(glm::rotate(-PI_OVER_2, UNIT_X_V3), LOCAL);
-		cameraObject2->setPosition(vec3(0.0f, 10.0f, 20.0f), LOCAL);
+		cameraObject2->setPosition(vec3(0.0f, 5.0f, 10.0f), LOCAL);
 		//cameraObject2->setRotation(glm::rotate(-PI/9, UNIT_X_V3), LOCAL);
 	}; // end loadScene
 

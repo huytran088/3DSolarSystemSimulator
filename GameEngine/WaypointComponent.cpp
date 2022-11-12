@@ -6,7 +6,7 @@ WaypointComponent::WaypointComponent(std::vector< glm::vec3> waypoints, vec3 vel
 	: velocity(velocity), speed(glm::length(velocity)), waypoints(waypoints), 
 	targetWaypointIndex(static_cast<int>(waypoints.size()) - 1)
 {
-	targetWaypointIndex = getNexWaypointIndex();
+	targetWaypointIndex = getNextWaypointIndex();
 
 }
 
@@ -15,8 +15,8 @@ void WaypointComponent::update(const float& deltaTime)
 	float radius = 1.0;
 
 	// Check if next waypoint has been reached
-	if (distanceToTargetWaypoint() < ( speed * deltaTime + radius)) {
-		targetWaypointIndex = getNexWaypointIndex();
+	if (distanceToTargetWaypoint() < (speed * deltaTime + radius)) {
+		targetWaypointIndex = getNextWaypointIndex();
 	}
 
 	// Get current facing directions
@@ -43,11 +43,11 @@ void WaypointComponent::update(const float& deltaTime)
 } // end update
 
 
-int WaypointComponent::getNexWaypointIndex()
+int WaypointComponent::getNextWaypointIndex()
 {
 	return (targetWaypointIndex + 1) % waypoints.size();
 
-} // end getNexWaypointIndex
+} // end getNextWaypointIndex
 
 vec3 WaypointComponent::getDirectionToNextWaypoint()
 {

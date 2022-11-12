@@ -13,7 +13,7 @@ void SteeringComponent::update(const float& deltaTime)
 {
 	// Check if next waypoint has been reached
 	if (distanceToTargetWaypoint() < (speed * deltaTime * 10.0f)) {
-		targetWaypointIndex = getNexWaypointIndex();
+		targetWaypointIndex = getNextWaypointIndex();
 		if (VERBOSE) cout << "point reached" << endl;
 	}
 

@@ -20,7 +20,7 @@ public:
 
 protected:
 
-	int getNexWaypointIndex();
+	int getNextWaypointIndex();
 	vec3 getDirectionToNextWaypoint();
 	GLfloat distanceToTargetWaypoint();
 
