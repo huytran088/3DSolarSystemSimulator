@@ -2,7 +2,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#define VERBOSE true
+#define VERBOSE false
 
 
 // Map containing all textures that have been loaded

@@ -47,6 +47,8 @@ protected:
 
 		// Instantiate a sphere shaped sun
 		auto* sun = new SphereMeshComponent(shaderProgram, sunMat, 7.5f);
+		//auto* shipModel1 = new ModelMeshComponent("jet_models/F-15C_Eagle.3ds", shaderProgram);
+		//sunGO->setScale(vec3(2.0f, 2.0f, 2.0f), LOCAL);
 
 		// Add the sun to a GameObject
 		sunGO->addComponent(sun); 
@@ -210,12 +212,16 @@ protected:
 
 		//******************************************* Spaceship
 		auto* shipGO = new GameObject();
-		auto* shipModel = new ModelMeshComponent("jet_models/Porsche_911_GT2.obj", shaderProgram);
-		shipGO->addComponent(shipModel);
-		shipGO->addComponent(new TranslateComponent(vec3(3.0f, 0.0f, 0.0f)));
+		auto* shipRotGO = new GameObject();
+		shipGO->addChildGameObject(shipRotGO);
+		shipRotGO->setRotation(glm::rotate(-PI_OVER_2, UNIT_X_V3), LOCAL);
+		//shipGO->setScale(vec3(0.5f, 0.5f, 0.5f), LOCAL);
+		auto* shipModel = new ModelMeshComponent("jet_models/F-15C_Eagle.3ds", shaderProgram);
+		shipRotGO->addComponent(shipModel);
+		shipGO->addComponent(new TranslateComponent(vec3(3.0f, 0.0f, 0.0f)));\
 		shipGO->addComponent(new SteerComponent(45.0f));
 		/*******************************************/
-
+	
 
 		// Light object
 		GameObject* lightObject = new GameObject();  
@@ -251,7 +257,7 @@ protected:
 		cameraObject1->addComponent(camera1);
 		// Camera object #2
 		auto* cameraObject2 = new GameObject();
-		auto* camera2 = new CameraComponent(1, 90.0f);
+		auto* camera2 = new CameraComponent(1, 100.0f);
 		camera2->setViewPort(0.0f, 0.0f, 1.0f, 0.5f);
 		camera2->setCameraClearColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		cameraObject2->addComponent(camera2);
@@ -311,8 +317,8 @@ protected:
 		// Set the position/rotation of the camera
 		cameraObject1->setPosition(vec3(0.0f, 30.0f, 0.0f));
 		cameraObject1->setRotation(glm::rotate(-PI_OVER_2, UNIT_X_V3), LOCAL);
-		cameraObject2->setPosition(vec3(0.0f, 3.0f, 5.0f), LOCAL);
-		cameraObject2->setRotation(glm::rotate(-PI/9, UNIT_X_V3), LOCAL);
+		cameraObject2->setPosition(vec3(0.0f, 10.0f, 20.0f), LOCAL);
+		//cameraObject2->setRotation(glm::rotate(-PI/9, UNIT_X_V3), LOCAL);
 	}; // end loadScene
 
 	virtual void processGameInput() override
