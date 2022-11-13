@@ -226,10 +226,10 @@ protected:
 		shipGO->addChildGameObject(shipRotationGO);
 		shipRotationGO->setRotation(glm::rotate(-PI_OVER_2, UNIT_X_V3), LOCAL);
 		// Load the spaceship model
-		auto* shipModel = new ModelMeshComponent("jet_models/F-15C_Eagle.3ds", shaderProgram);
+		auto* shipModel = new ModelMeshComponent("My_object/Luminaris OBJ.obj", shaderProgram);
 		shipRotationGO->addComponent(shipModel);
 		// Set the scale of the ship
-		shipRotationGO->setScale(vec3(0.5f, 0.5f, 0.5f));
+		shipRotationGO->setScale(vec3(0.1f, 0.1f, 0.1f));
 		
 		/*******************************************/
 
