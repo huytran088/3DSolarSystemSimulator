@@ -227,7 +227,6 @@ protected:
 		// Waypoints of planets
 		std::vector<GameObject*> solarWaypoints;
 		// Push back the location of the ship, the sun, and the planets
-		solarWaypoints.push_back(shipGO);
 		solarWaypoints.push_back(sunGO);
 		solarWaypoints.push_back(earthGO);
 		solarWaypoints.push_back(marsGO);
@@ -324,7 +323,7 @@ protected:
 		// Rotate the sun object
 		sunGO->setRotation(glm::rotate(PI / 4.0f, UNIT_Y_V3)); 
 		// Set the position of the ship
-		shipGO->setPosition(vec3(20.0f, 0.0f, 0.0f));
+		shipGO->setPosition(vec3(20.0f, 0.0f, 10.0f));
 		//shipGO->setRotation(glm::rotate(PI, UNIT_X_V3)* glm::rotate(PI, UNIT_Y_V3));
 		//lightObject->setPosition(vec3(0.0f, 0.0f, 0.0f), WORLD);
 		// Set the position/rotation of the camera

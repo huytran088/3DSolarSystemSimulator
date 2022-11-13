@@ -1,18 +1,32 @@
 #include "SpaceTravelComponent.h"
 
-#define VERBOSE true
+#define VERBOSE false
 
 
 SpaceTravelComponent::SpaceTravelComponent(std::vector<GameObject*> planets, vec3 velocity)
 	: velocity(velocity), speed(glm::length(velocity)), planets(planets),
 	targetPlanetIndex(static_cast<int>(planets.size()) - 1)
 {
+	componentType = MOVE;
 	targetPlanetIndex = 0;
 }
 
 void SpaceTravelComponent::update(const float& deltaTime)
 {
 	float radius = 1.0;
+
+	// Check if next waypoint has been reached
+	if (distanceToTargetPlanet() < (speed * deltaTime + radius)) {
+		if (targetPlanetIndex == 0) {
+			speed = 0.0f;
+		}
+		else {
+			speed = 8.0f;
+		}
+	}
+	else {
+		speed = 10.0f;
+	}
 
 	// Get current facing directions
 	vec3 current = owningGameObject->getFowardDirection(WORLD);
@@ -29,14 +43,8 @@ void SpaceTravelComponent::update(const float& deltaTime)
 	// Get the current position
 	vec3 position = owningGameObject->getPosition(WORLD);
 
-	// Check if next waypoint has been reached
-	if (distanceToTargetPlanet() >= (speed * deltaTime + radius)) {
-		// Update the position based on the newDirection
-		position = position + newDirection * speed * deltaTime;
-	}
-	else {
-
-	}
+	// Update the position based on the newDirection
+	position = position + newDirection * speed * deltaTime;
 
 	// Set the position of the GameObject
 	owningGameObject->setPosition(position, WORLD);
@@ -58,18 +66,18 @@ void SpaceTravelComponent::processInput()
 {
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_0)) {
 		// Go to the sun
-		targetPlanetIndex = 1;
+		targetPlanetIndex = 0;
 	}
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_1)) {
 		// Go to Earth
-		targetPlanetIndex = 2;
+		targetPlanetIndex = 1;
 	}
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_2)) {
 		// Go to Mars
-		targetPlanetIndex = 3;
+		targetPlanetIndex = 2;
 	}
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_3)) {
 		// Go to venus
-		targetPlanetIndex = 4;
+		targetPlanetIndex = 3;
 	}
 }

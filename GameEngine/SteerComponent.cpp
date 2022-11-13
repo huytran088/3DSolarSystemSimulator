@@ -2,6 +2,7 @@
 
 SteerComponent::SteerComponent(float turnRate, int updateOrder) : Component(updateOrder), turnRate(turnRate)
 {
+	componentType = MOVE;
 }
 
 void SteerComponent::update(const float& deltaTime)
