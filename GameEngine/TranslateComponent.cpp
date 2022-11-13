@@ -17,7 +17,7 @@ void TranslateComponent::initialize()
 
 void TranslateComponent::update(const float& deltaTime)
 {
-	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_UP)) {
+	/*if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_UP)) {
 		vec3 position = owningGameObject->getPosition();
 
 		position += velocity * deltaTime;
@@ -30,10 +30,10 @@ void TranslateComponent::update(const float& deltaTime)
 		position -= velocity * deltaTime;
 
 		owningGameObject->setPosition(position);
-	}
-	//vec3 position = owningGameObject->getPosition();
+	}*/
+	vec3 position = owningGameObject->getPosition();
 
-	//position += velocity * deltaTime;
+	position += velocity * deltaTime;
 
-	//owningGameObject->setPosition(position);
+	owningGameObject->setPosition(position);
 }

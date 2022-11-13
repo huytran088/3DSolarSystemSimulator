@@ -129,6 +129,9 @@
     <ClInclude Include="SpaceTravelComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ReparentComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BuildShaderProgram.cpp">
@@ -237,6 +240,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpaceTravelComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ReparentComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

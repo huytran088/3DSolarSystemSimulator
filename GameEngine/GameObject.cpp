@@ -170,8 +170,10 @@ void GameObject::removeComponent(Component* component)
 		// Remove the Component for the components vector
 		components.erase(iter);
 
-		// Release the memory allocated to the component
-		delete temp;
+		// Release the memory allocated to the non-moving component
+		if (component->getComponentType() != MOVE) {
+			delete temp;
+		}
 	}
 
 } // end removeComponent

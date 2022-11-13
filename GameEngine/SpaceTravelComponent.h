@@ -25,12 +25,25 @@ protected:
 	vec3 getDirectionToNextPlanet();
 	GLfloat distanceToTargetPlanet();
 
+	/**
+	 * @fn	void checkIfPlanetReached(const float& deltaTime, const float& radius);
+	 * 
+	 * @brief	A helper method to check whether the ship has reached the planet, and adjust the
+	 *			speed accordingly.
+	 * 
+	 * @param	deltaTime	The time in seconds since the component was
+	 * 						last updated.
+	 * @param	radius	The radius of the range to check
+	 */
+	void checkIfPlanetReached(const float& deltaTime, const float& radius);
+
 	std::vector<GameObject*> planets;
 
 	vec3 velocity;
 	float speed;
 
 	int targetPlanetIndex = 0;
+	bool isMoving = false;
 
 };
 

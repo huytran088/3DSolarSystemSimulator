@@ -42,3 +42,5 @@
 #include "SoundListenerComponent.h"
 #include "SoundSourceComponent.h"
 
+// Stealing
+#include "ReparentComponent.h"

@@ -13,41 +13,33 @@ SpaceTravelComponent::SpaceTravelComponent(std::vector<GameObject*> planets, vec
 
 void SpaceTravelComponent::update(const float& deltaTime)
 {
-	float radius = 1.0;
+	float radius = 6.0;
 
-	// Check if next waypoint has been reached
-	if (distanceToTargetPlanet() < (speed * deltaTime + radius)) {
-		if (targetPlanetIndex == 0) {
-			speed = 0.0f;
-		}
-		else {
-			speed = 8.0f;
-		}
+	if (isMoving) {
+		// Check if next planet has been reached
+		checkIfPlanetReached(deltaTime, radius);
+
+		// Get current facing directions
+		vec3 current = owningGameObject->getFowardDirection(WORLD);
+
+		// Get direction to the next waypoint
+		vec3 desiredDirection = getDirectionToNextPlanet();
+
+		// Incrementally update current direction to face the next waypoint
+		vec3 newDirection = glm::lerp(current, desiredDirection, deltaTime);
+
+		// Rotate to face the new direction
+		owningGameObject->rotateTo(newDirection, WORLD);
+
+		// Get the current position
+		vec3 position = owningGameObject->getPosition(WORLD);
+
+		// Update the position based on the newDirection
+		position = position + newDirection * speed * deltaTime;
+
+		// Set the position of the GameObject
+		owningGameObject->setPosition(position, WORLD);
 	}
-	else {
-		speed = 10.0f;
-	}
-
-	// Get current facing directions
-	vec3 current = owningGameObject->getFowardDirection(WORLD);
-
-	// Get direction to the next waypoint
-	vec3 desiredDirection = getDirectionToNextPlanet();
-
-	// Incrementally update current direction to face the next waypoint
-	vec3 newDirection = glm::lerp(current, desiredDirection, deltaTime);
-
-	// Rotate to face the new direction
-	owningGameObject->rotateTo(newDirection, WORLD);
-
-	// Get the current position
-	vec3 position = owningGameObject->getPosition(WORLD);
-
-	// Update the position based on the newDirection
-	position = position + newDirection * speed * deltaTime;
-
-	// Set the position of the GameObject
-	owningGameObject->setPosition(position, WORLD);
 }
 
 vec3 SpaceTravelComponent::getDirectionToNextPlanet() {
@@ -62,22 +54,56 @@ GLfloat SpaceTravelComponent::distanceToTargetPlanet() {
 	return dist;
 }
 
+void SpaceTravelComponent::checkIfPlanetReached(const float& deltaTime, const float& radius)
+{
+	if (distanceToTargetPlanet() < (speed * deltaTime + radius)) {
+		switch (targetPlanetIndex) {
+		case 0:	// Sun
+			if (VERBOSE) cout << "Sun reached" << endl;
+			isMoving = false;
+			speed = 0.0f;
+			break;
+		case 1:	// Earth
+			if (VERBOSE) cout << "Earth reached" << endl;
+			speed = 3.0f;
+			break;
+		case 2:	// Mars
+			if (VERBOSE) cout << "Mars reached" << endl;
+			speed = 5.0f;
+			break;
+		case 3:	// Venus
+			if (VERBOSE) cout << "Venus reached" << endl;
+			speed = 6.5f;
+			break;
+		default:
+			speed = 0.0f;
+		}
+	}
+	else {
+		speed = 7.0f;
+	}
+}
+
 void SpaceTravelComponent::processInput()
 {
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_0)) {
 		// Go to the sun
+		isMoving = true;
 		targetPlanetIndex = 0;
 	}
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_1)) {
 		// Go to Earth
+		isMoving = true;
 		targetPlanetIndex = 1;
 	}
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_2)) {
 		// Go to Mars
+		isMoving = true;
 		targetPlanetIndex = 2;
 	}
 	if (glfwGetKey(glfwGetCurrentContext(), GLFW_KEY_3)) {
 		// Go to venus
+		isMoving = true;
 		targetPlanetIndex = 3;
 	}
 }

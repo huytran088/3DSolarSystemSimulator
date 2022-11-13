@@ -36,6 +36,7 @@ protected:
 		//******************************************* Sun
 		// Create a container to hold the sun
 		GameObject* sunGO = new GameObject(); 
+		this->addChildGameObject(sunGO);
 
 		// Create a "yellow" material for the sun
 		Material sunMat;
@@ -60,6 +61,7 @@ protected:
 		//******************************************* Earth
 		// Create a empty spin GameObject
 		auto* earthOrbitGO = new GameObject();
+		this->addChildGameObject(earthOrbitGO);
 		earthOrbitGO->addComponent(new SpinComponent(11.4f));
 		
 		// Add the empty translate GO to the earth
@@ -95,6 +97,7 @@ protected:
 
 		auto* moonGO = new GameObject();
 		moonOrbitGO->addChildGameObject(moonGO);
+		
 		moonGO->setPosition(vec3(3.0f, 0.0f, 0.0f), LOCAL);
 		moonGO->addComponent(new SpinComponent(-14.09f));
 
@@ -106,11 +109,13 @@ protected:
 		auto * moon = new SphereMeshComponent(shaderProgram, moonMat, 0.5f);
 		// Add the moon to the moonGO
 		moonGO->addComponent(moon);
+
 		/*******************************************/
 
 		//******************************************* Mars
 		// Add the empty spin to Mars
 		auto* marsOrbitGO = new GameObject();
+		this->addChildGameObject(marsOrbitGO);
 		marsOrbitGO->addComponent(new SpinComponent(6.1f));
 
 		// Add the empty translate GO to the earth
@@ -183,6 +188,7 @@ protected:
 		//******************************************* Venus
 		// Add the empty spin to Venus
 		auto* venusOrbitGO = new GameObject();
+		this->addChildGameObject(venusOrbitGO);
 		venusOrbitGO->addComponent(new SpinComponent(18.24f));
 
 		// Add the empty translate GO to the earth
@@ -212,21 +218,26 @@ protected:
 
 		//******************************************* Spaceship
 		auto* shipGO = new GameObject();
-		auto* shipLocationGO = new GameObject();
-		shipGO->addChildGameObject(shipLocationGO);
-		shipLocationGO->setRotation(glm::rotate(-PI_OVER_2, UNIT_X_V3), LOCAL);
-		//shipGO->setScale(vec3(0.5f, 0.5f, 0.5f), LOCAL);
+		this->addChildGameObject(shipGO);
+		// Set the position of the ship
+		shipGO->setPosition(vec3(-10.0f, 0.0f, -7.0f));
+		// Set the rotation of the ship
+		auto* shipRotationGO = new GameObject();
+		shipGO->addChildGameObject(shipRotationGO);
+		shipRotationGO->setRotation(glm::rotate(-PI_OVER_2, UNIT_X_V3), LOCAL);
+		// Load the spaceship model
 		auto* shipModel = new ModelMeshComponent("jet_models/F-15C_Eagle.3ds", shaderProgram);
-		shipLocationGO->setScale(vec3(0.7f, 0.7f, 0.7f));
-		shipLocationGO->addComponent(shipModel);
-		shipGO->addComponent(new TranslateComponent(vec3(3.0f, 0.0f, 0.0f)));\
-		shipGO->addComponent(new SteerComponent(45.0f));
+		shipRotationGO->addComponent(shipModel);
+		// Set the scale of the ship
+		shipRotationGO->setScale(vec3(0.5f, 0.5f, 0.5f));
+		
 		/*******************************************/
 
 		//******************************************* Space Travel
 		// Waypoints of planets
 		std::vector<GameObject*> solarWaypoints;
 		// Push back the location of the ship, the sun, and the planets
+		//solarWaypoints.push_back(shipGO);
 		solarWaypoints.push_back(sunGO);
 		solarWaypoints.push_back(earthGO);
 		solarWaypoints.push_back(marsGO);
@@ -235,33 +246,39 @@ protected:
 		shipGO->addComponent(solarTravel);
 		/*******************************************/
 
-		// Light object
-		GameObject* lightObject = new GameObject();  
-
+		//******************************************* Light objects
+	
 		// Set up the positional light
+		GameObject* posLightObject = new GameObject();
 		auto* posLightComponent = new PositionalLightComponent(GLFW_KEY_P);
 		posLightComponent->setAmbientColor(vec4(0.5f, 0.5f, 0.5f, 1.0f));
 		posLightComponent->setDiffuseColor(WHITE_RGBA);
+		posLightComponent->setEnable(true);
 		//posLightComponent->setAttenuationFactors(0.5f);
 
-		// Set up the directional light
-		auto* dirLightComponent = new DirectionalLightComponent(GLFW_KEY_D);
-		dirLightComponent->setAmbientColor(vec4(0.1f, 0.1f, 0.1f, 1.0f));
-		dirLightComponent->setDiffuseColor(WHITE_RGBA);
-
 		// Set up the spot light
+		GameObject* spotLightObject = new GameObject();
+		spotLightObject->setPosition(vec3(0.0f, 0.0f, 0.0f), LOCAL);
 		auto* spotLightComponent = new SpotLightComponent(GLFW_KEY_S);
-		spotLightComponent->setCutoffAngleInDegrees(120.0f);
-		spotLightComponent->setAmbientColor(vec4(0.1f, 0.1f, 0.1f, 1.0f));
+		spotLightComponent->setCutoffAngleInDegrees(45.0f);
+		spotLightComponent->setAmbientColor(vec4(0.7f, 0.7f, 0.7f, 1.0f));
 		spotLightComponent->setDiffuseColor(WHITE_RGBA);
+		spotLightComponent->setEnable(true);
 
 		// Add light components to light objects
-		lightObject->addComponent(posLightComponent);
-		/*lightObject->addComponent(dirLightComponent);
-		lightObject->addComponent(spotLightComponent);*/
-
+		posLightObject->addComponent(posLightComponent);
+		spotLightObject->addComponent(spotLightComponent);
+		// Add the positional light to the sun's center
+		sunGO->addChildGameObject(posLightObject);
+		// Add the spot light to the spaceship
+		shipGO->addChildGameObject(spotLightObject);
+		/*******************************************/
+	
+		//******************************************* Cameras
 		// Camera object #1
 		auto* cameraObject1 = new GameObject();
+		// Attach the 1st camera to the world
+		this->addChildGameObject(cameraObject1);
 		auto* camera1 = new CameraComponent(0, 90.0f);
 		camera1->setViewPort(0.0f, 0.5f, 1.0f, 0.5f);
 		camera1->setCameraClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
@@ -269,10 +286,21 @@ protected:
 		cameraObject1->addComponent(camera1);
 		// Camera object #2
 		auto* cameraObject2 = new GameObject();
+		// Attach the 2nd camera to the ship
+		shipGO->addChildGameObject(cameraObject2);
 		auto* camera2 = new CameraComponent(1, 100.0f);
 		camera2->setViewPort(0.0f, 0.0f, 1.0f, 0.5f);
-		camera2->setCameraClearColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
-		cameraObject2->addComponent(camera2);
+		camera2->setCameraClearColor(vec4(0.03f, 0.03f, 0.03f, 1.0f));
+		cameraObject2->addComponent(camera2);	
+
+		// Set the position/rotation of the cameras
+		cameraObject1->setPosition(vec3(0.0f, 40.0f, 0.0f));
+		cameraObject1->setRotation(glm::rotate(-PI_OVER_2, UNIT_X_V3), LOCAL);
+		cameraObject2->setPosition(vec3(0.0f, 5.0f, 10.0f), LOCAL);
+		//cameraObject2->setRotation(glm::rotate(-PI/9, UNIT_X_V3), LOCAL);
+		/*******************************************/
+
+		//******************************************* Sounds
 
 		// Sound components for the sun
 		auto* sunSoundSource = new SoundSourceComponent("Sounds/enter_sandman.wav", 4.0f, 3.0f, 8.0f);
@@ -306,31 +334,14 @@ protected:
 		auto* listener = new SoundListenerComponent();
 		shipGO->addComponent(listener);
 
-		// Add the game objects to the game
-		// Solar system
-		this->addChildGameObject(sunGO);
-		this->addChildGameObject(earthOrbitGO);
-		this->addChildGameObject(marsOrbitGO);
-		this->addChildGameObject(venusOrbitGO);
-		// Spaceship
-		this->addChildGameObject(shipGO);
-		// Light is the sun's center
-		sunGO->addChildGameObject(lightObject);
-		// Camera
-		this->addChildGameObject(cameraObject1);
-		shipGO->addChildGameObject(cameraObject2);
+		/*******************************************/
 
-		// Rotate the sun object
-		sunGO->setRotation(glm::rotate(PI / 4.0f, UNIT_Y_V3)); 
-		// Set the position of the ship
-		shipGO->setPosition(vec3(20.0f, 0.0f, 10.0f));
-		//shipGO->setRotation(glm::rotate(PI, UNIT_X_V3)* glm::rotate(PI, UNIT_Y_V3));
-		//lightObject->setPosition(vec3(0.0f, 0.0f, 0.0f), WORLD);
-		// Set the position/rotation of the camera
-		cameraObject1->setPosition(vec3(0.0f, 40.0f, 0.0f));
-		cameraObject1->setRotation(glm::rotate(-PI_OVER_2, UNIT_X_V3), LOCAL);
-		cameraObject2->setPosition(vec3(0.0f, 5.0f, 10.0f), LOCAL);
-		//cameraObject2->setRotation(glm::rotate(-PI/9, UNIT_X_V3), LOCAL);
+		//******************************************* Moon Stealing (Reparenting)
+		// Attach the reparenting (stealing) component to the moon
+		moonOrbitGO->addComponent(new ReparentComponent(shipGO, 6.0f));
+		phobosOrbitGO->addComponent(new ReparentComponent(shipGO, 6.0f));
+		deimosOrbitGO->addComponent(new ReparentComponent(shipGO, 6.0f));
+		/*******************************************/
 	}; // end loadScene
 
 	virtual void processGameInput() override
