@@ -47,8 +47,8 @@ A custom C++ game engine featuring an interactive 3D solar system simulation wit
 - **GLFW 3**: Window management and input handling
 - **GLEW**: OpenGL extension loading
 - **GLM**: Vector and matrix mathematics
-- **OpenAL**: 3D audio engine
-- **ALUT**: OpenAL Utility Toolkit
+- **OpenAL**: 3D audio engine (via openal-soft)
+- **FreeALUT**: OpenAL Utility Toolkit for loading audio files
 - **Assimp**: 3D model loading (.obj, .3ds, .fbx formats)
 
 ## CI/CD Pipeline
@@ -114,24 +114,103 @@ If you prefer manual installation, download and install each library, then confi
 
 ### Build Steps
 
+#### Windows (Visual Studio 2022)
+
 1. **Clone the repository:**
    ```bash
    git clone <repository-url>
-   cd tranquhProject3
+   cd 3DSolarSystemSimulator
    ```
 
-2. **Open the solution:**
+2. **Install dependencies using vcpkg:**
+   ```bash
+   # Install vcpkg if you haven't already
+   git clone https://github.com/Microsoft/vcpkg.git
+   cd vcpkg
+   git checkout 3508985146f1b1d248c67eecc086f3ce281f9200
+   .\bootstrap-vcpkg.bat
+
+   # Install dependencies from vcpkg.json
+   .\vcpkg install --triplet=x64-windows
+
+   # Integrate with Visual Studio
+   .\vcpkg integrate install
+   ```
+
+3. **Open the solution:**
    - Open `tranquhProject3.sln` in Visual Studio 2022
 
-3. **Configure build:**
+4. **Configure build:**
    - Select your build configuration (Debug or Release)
    - Select platform (x86 or x64)
 
-4. **Build:**
+5. **Build:**
    - Press `F7` or Build > Build Solution
 
-5. **Run:**
+6. **Run:**
    - Press `F5` or Debug > Start Debugging
+
+#### Linux / WSL2 (CMake)
+
+1. **Install system dependencies:**
+   ```bash
+   sudo apt-get update
+   sudo apt-get install -y \
+     build-essential \
+     cmake \
+     ninja-build \
+     libgl1-mesa-dev \
+     libglu1-mesa-dev \
+     libx11-dev \
+     libxrandr-dev \
+     libxinerama-dev \
+     libxcursor-dev \
+     libxi-dev \
+     git \
+     curl \
+     zip \
+     unzip \
+     tar \
+     pkg-config
+   ```
+
+2. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd 3DSolarSystemSimulator
+   ```
+
+3. **Setup vcpkg:**
+   ```bash
+   git clone https://github.com/Microsoft/vcpkg.git
+   cd vcpkg
+   git checkout 3508985146f1b1d248c67eecc086f3ce281f9200
+   ./bootstrap-vcpkg.sh
+   cd ..
+   ```
+
+4. **Install dependencies:**
+   ```bash
+   ./vcpkg/vcpkg install --triplet=x64-linux
+   ```
+
+5. **Configure with CMake:**
+   ```bash
+   cmake -B build \
+     -DCMAKE_BUILD_TYPE=Release \
+     -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake \
+     -G Ninja
+   ```
+
+6. **Build:**
+   ```bash
+   cmake --build build --config Release -j$(nproc)
+   ```
+
+7. **Run:**
+   ```bash
+   ./build/bin/SolarSystemSimulator
+   ```
 
 ### Build Cleanup
 
