@@ -27,5 +27,5 @@
       "version>=": "5.0.0"
     }
   ],
-  "builtin-baseline": "latest"
+  "builtin-baseline": "3508985146f1b1d248c67eecc086f3ce281f9200"
 }

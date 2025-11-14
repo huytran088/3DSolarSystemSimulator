@@ -7,17 +7,25 @@ on:
     branches: [ main, master, develop ]
   workflow_dispatch:
 
-env:
-  VCPKG_BINARY_SOURCES: 'clear;x-gha,readwrite'
-
 jobs:
   build-windows-vs2022:
     name: Build Windows (Visual Studio 2022)
     runs-on: windows-2022
     strategy:
       matrix:
-        platform: [x64, Win32]
-        configuration: [Debug, Release]
+        include:
+          - platform: x64
+            triplet: x64-windows
+            configuration: Debug
+          - platform: x64
+            triplet: x64-windows
+            configuration: Release
+          - platform: Win32
+            triplet: x86-windows
+            configuration: Debug
+          - platform: Win32
+            triplet: x86-windows
+            configuration: Release
 
     steps:
     - name: Checkout repository
@@ -27,30 +35,23 @@ jobs:
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
-      with:
-        vs-version: '17.0'
-
-    - name: Export GitHub Actions cache environment variables
-      uses: actions/github-script@v7
-      with:
-        script: |
-          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     - name: Setup vcpkg
-      uses: lukka/run-vcpkg@v11
-      with:
-        vcpkgGitCommitId: 'c8696863d371ab7f46e213d8f5ca923c4aef2a00'
-        vcpkgJsonGlob: 'vcpkg.json'
+      run: |
+        git clone https://github.com/Microsoft/vcpkg.git
+        cd vcpkg
+        git checkout 3508985146f1b1d248c67eecc086f3ce281f9200
+        .\bootstrap-vcpkg.bat
+      shell: pwsh
 
     - name: Install dependencies with vcpkg
       run: |
-        vcpkg install --triplet=${{ matrix.platform }}-windows
+        .\vcpkg\vcpkg install --triplet=${{ matrix.triplet }}
       shell: pwsh
 
     - name: Integrate vcpkg with Visual Studio
       run: |
-        vcpkg integrate install
+        .\vcpkg\vcpkg integrate install
       shell: pwsh
 
     - name: Build solution
@@ -58,8 +59,6 @@ jobs:
         msbuild tranquhProject3.sln `
           /p:Configuration=${{ matrix.configuration }} `
           /p:Platform=${{ matrix.platform }} `
-          /p:VcpkgEnabled=true `
-          /p:VcpkgTriplet=${{ matrix.platform }}-windows `
           /m `
           /v:minimal
       shell: pwsh
@@ -109,18 +108,16 @@ jobs:
           tar \
           pkg-config
 
-    - name: Export GitHub Actions cache environment variables
-      uses: actions/github-script@v7
-      with:
-        script: |
-          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-
     - name: Setup vcpkg
-      uses: lukka/run-vcpkg@v11
-      with:
-        vcpkgGitCommitId: 'c8696863d371ab7f46e213d8f5ca923c4aef2a00'
-        vcpkgJsonGlob: 'vcpkg.json'
+      run: |
+        git clone https://github.com/Microsoft/vcpkg.git
+        cd vcpkg
+        git checkout 3508985146f1b1d248c67eecc086f3ce281f9200
+        ./bootstrap-vcpkg.sh
+
+    - name: Install dependencies with vcpkg
+      run: |
+        ./vcpkg/vcpkg install --triplet=x64-linux
 
     - name: Create CMakeLists.txt for Linux build
       run: |
@@ -203,7 +200,7 @@ jobs:
       run: |
         cmake -B build \
           -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} \
-          -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
+          -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake \
           -G Ninja
 
     - name: Build project
