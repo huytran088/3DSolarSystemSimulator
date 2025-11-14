@@ -1,0 +1,239 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop, claude/** ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+env:
+  VCPKG_BINARY_SOURCES: 'clear;x-gha,readwrite'
+
+jobs:
+  build-windows-vs2022:
+    name: Build Windows (Visual Studio 2022)
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        platform: [x64, Win32]
+        configuration: [Debug, Release]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+      with:
+        vs-version: '17.0'
+
+    - name: Export GitHub Actions cache environment variables
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgGitCommitId: 'c8696863d371ab7f46e213d8f5ca923c4aef2a00'
+        vcpkgJsonGlob: 'vcpkg.json'
+
+    - name: Install dependencies with vcpkg
+      run: |
+        vcpkg install --triplet=${{ matrix.platform }}-windows
+      shell: pwsh
+
+    - name: Integrate vcpkg with Visual Studio
+      run: |
+        vcpkg integrate install
+      shell: pwsh
+
+    - name: Build solution
+      run: |
+        msbuild tranquhProject3.sln `
+          /p:Configuration=${{ matrix.configuration }} `
+          /p:Platform=${{ matrix.platform }} `
+          /p:VcpkgEnabled=true `
+          /p:VcpkgTriplet=${{ matrix.platform }}-windows `
+          /m `
+          /v:minimal
+      shell: pwsh
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: SolarSystem-${{ matrix.platform }}-${{ matrix.configuration }}
+        path: |
+          ${{ matrix.platform }}/${{ matrix.configuration }}/*.exe
+          ${{ matrix.platform }}/${{ matrix.configuration }}/*.dll
+        if-no-files-found: warn
+        retention-days: 30
+
+  build-linux-wsl2:
+    name: Build Linux (WSL2-compatible)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          cmake \
+          ninja-build \
+          libgl1-mesa-dev \
+          libglu1-mesa-dev \
+          libx11-dev \
+          libxrandr-dev \
+          libxinerama-dev \
+          libxcursor-dev \
+          libxi-dev \
+          libopenal-dev \
+          git \
+          curl \
+          zip \
+          unzip \
+          tar \
+          pkg-config
+
+    - name: Export GitHub Actions cache environment variables
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgGitCommitId: 'c8696863d371ab7f46e213d8f5ca923c4aef2a00'
+        vcpkgJsonGlob: 'vcpkg.json'
+
+    - name: Create CMakeLists.txt for Linux build
+      run: |
+        cat > CMakeLists.txt << 'EOF'
+        cmake_minimum_required(VERSION 3.15)
+        project(SolarSystemSimulator)
+
+        set(CMAKE_CXX_STANDARD 17)
+        set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+        # Find packages
+        find_package(glfw3 CONFIG REQUIRED)
+        find_package(GLEW REQUIRED)
+        find_package(glm CONFIG REQUIRED)
+        find_package(OpenAL CONFIG REQUIRED)
+        find_package(assimp CONFIG REQUIRED)
+        find_package(OpenGL REQUIRED)
+
+        # Collect all source files
+        file(GLOB_RECURSE SOURCES
+          "GameEngine/*.cpp"
+        )
+
+        # Collect all header files
+        file(GLOB_RECURSE HEADERS
+          "GameEngine/*.h"
+        )
+
+        # Create executable
+        add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+
+        # Include directories
+        target_include_directories(${PROJECT_NAME} PRIVATE
+          ${CMAKE_CURRENT_SOURCE_DIR}/GameEngine
+        )
+
+        # Link libraries
+        target_link_libraries(${PROJECT_NAME} PRIVATE
+          glfw
+          GLEW::GLEW
+          glm::glm
+          OpenAL::OpenAL
+          assimp::assimp
+          OpenGL::GL
+          ${CMAKE_DL_LIBS}
+        )
+
+        # Set output directory
+        set_target_properties(${PROJECT_NAME} PROPERTIES
+          RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+        )
+
+        # Copy resources to build directory
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+          COMMAND ${CMAKE_COMMAND} -E copy_directory
+          ${CMAKE_SOURCE_DIR}/GameEngine/Shaders
+          ${CMAKE_BINARY_DIR}/bin/Shaders
+        )
+
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+          COMMAND ${CMAKE_COMMAND} -E copy_directory
+          ${CMAKE_SOURCE_DIR}/GameEngine/Textures
+          ${CMAKE_BINARY_DIR}/bin/Textures
+        )
+
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+          COMMAND ${CMAKE_COMMAND} -E copy_directory
+          ${CMAKE_SOURCE_DIR}/GameEngine/Sounds
+          ${CMAKE_BINARY_DIR}/bin/Sounds
+        )
+
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+          COMMAND ${CMAKE_COMMAND} -E copy_directory
+          ${CMAKE_SOURCE_DIR}/GameEngine/My_object
+          ${CMAKE_BINARY_DIR}/bin/My_object
+        )
+        EOF
+
+    - name: Configure CMake
+      run: |
+        cmake -B build \
+          -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} \
+          -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
+          -G Ninja
+
+    - name: Build project
+      run: |
+        cmake --build build --config ${{ matrix.configuration }} -j$(nproc)
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: SolarSystem-Linux-${{ matrix.configuration }}
+        path: |
+          build/bin/*
+        if-no-files-found: warn
+        retention-days: 30
+
+  build-status:
+    name: Build Status Summary
+    runs-on: ubuntu-latest
+    needs: [build-windows-vs2022, build-linux-wsl2]
+    if: always()
+
+    steps:
+    - name: Check build results
+      run: |
+        echo "Windows VS2022 Build: ${{ needs.build-windows-vs2022.result }}"
+        echo "Linux/WSL2 Build: ${{ needs.build-linux-wsl2.result }}"
+
+        if [[ "${{ needs.build-windows-vs2022.result }}" != "success" ]] || [[ "${{ needs.build-linux-wsl2.result }}" != "success" ]]; then
+          echo "One or more builds failed!"
+          exit 1
+        fi
+
+        echo "All builds succeeded!"

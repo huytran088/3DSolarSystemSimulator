@@ -2,7 +2,8 @@
 
 A custom C++ game engine featuring an interactive 3D solar system simulation with a flyable UFO spaceship and moon-stealing mechanics.
 
-![Platform](https://img.shields.io/badge/platform-Windows-blue)
+![Build Status](https://github.com/huytran088/3DSolarSystemSimulator/actions/workflows/ci.yml/badge.svg)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-blue)
 ![OpenGL](https://img.shields.io/badge/OpenGL-4.5-green)
 ![C++](https://img.shields.io/badge/C%2B%2B-17-orange)
 
@@ -49,6 +50,35 @@ A custom C++ game engine featuring an interactive 3D solar system simulation wit
 - **OpenAL**: 3D audio engine
 - **ALUT**: OpenAL Utility Toolkit
 - **Assimp**: 3D model loading (.obj, .3ds, .fbx formats)
+
+## CI/CD Pipeline
+
+This project includes automated CI/CD workflows that build and test the project on multiple platforms:
+
+### Supported Build Environments
+
+- **Windows with Visual Studio 2022**: Builds both x86 and x64 configurations (Debug and Release)
+- **Linux/WSL2**: Ubuntu-based builds compatible with WSL2 environments (Debug and Release)
+
+### Automated Builds
+
+The CI/CD pipeline automatically runs on:
+- Push to `main`, `master`, `develop` branches, or any branch starting with `claude/`
+- Pull requests to `main`, `master`, or `develop` branches
+- Manual workflow dispatch
+
+### Build Artifacts
+
+After each successful build, compiled binaries are available as downloadable artifacts:
+- `SolarSystem-x64-Debug` / `SolarSystem-x64-Release` (Windows 64-bit)
+- `SolarSystem-Win32-Debug` / `SolarSystem-Win32-Release` (Windows 32-bit)
+- `SolarSystem-Linux-Debug` / `SolarSystem-Linux-Release` (Linux/WSL2)
+
+Artifacts are retained for 30 days.
+
+### Dependencies Management
+
+The pipeline uses vcpkg for automated dependency management, ensuring consistent builds across all environments. All dependencies from `vcpkg.json` are automatically installed during the build process.
 
 ## Building the Project
 
