@@ -72,7 +72,7 @@
     <ClInclude Include="ArrowRotateComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MakeVisableComponent.h">
+    <ClInclude Include="MakeVisibleComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TranslateComponent.h">
@@ -105,7 +105,7 @@
     <ClInclude Include="CameraComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CylinderMeshCompnent.h">
+    <ClInclude Include="CylinderMeshComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SteeringComponent.h">
@@ -185,7 +185,7 @@
     <ClCompile Include="ArrowRotateComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MakeVisableComponent.cpp">
+    <ClCompile Include="MakeVisibleComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TranslateComponent.cpp">
@@ -218,7 +218,7 @@
     <ClCompile Include="CameraComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CylinderMeshCompnent.cpp">
+    <ClCompile Include="CylinderMeshComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SteeringComponent.cpp">

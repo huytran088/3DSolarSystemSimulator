@@ -1,0 +1,31 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "solar-system-simulator",
+  "version": "1.0.0",
+  "description": "A custom C++ game engine featuring an interactive 3D solar system simulation",
+  "homepage": "https://github.com/huytran088/tranquhProject3",
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "glfw3",
+      "version>=": "3.3.0"
+    },
+    {
+      "name": "glew",
+      "version>=": "2.1.0"
+    },
+    {
+      "name": "glm",
+      "version>=": "0.9.9"
+    },
+    {
+      "name": "openal-soft",
+      "version>=": "1.21.0"
+    },
+    {
+      "name": "assimp",
+      "version>=": "5.0.0"
+    }
+  ],
+  "builtin-baseline": "latest"
+}

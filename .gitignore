@@ -347,3 +347,51 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# vcpkg
+vcpkg_installed/
+.vcpkg/
+
+# CMake (if added in future)
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# OpenGL/Graphics specific
+*.pdb
+*.ilk
+*.log
+
+# Backup files
+*.bak
+*~
+*.swp
+*.swo
+
+# OS specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE specific
+.idea/
+.vscode/
+*.code-workspace
+
+# Build output
+*.exe
+*.dll
+*.lib
+*.exp
+*.pdb
+*.idb
+*.manifest
+
+# Temporary files
+*.tmp
+*.temp

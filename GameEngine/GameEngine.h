@@ -16,11 +16,11 @@
 #include "BoxMeshComponent.h"
 #include "ModelMeshComponent.h"
 #include "SphereMeshComponent.h"
-#include "CylinderMeshCompnent.h"
+#include "CylinderMeshComponent.h"
 
 // Movement
 #include "ArrowRotateComponent.h"
-#include "MakeVisableComponent.h"
+#include "MakeVisibleComponent.h"
 #include "TranslateComponent.h"
 #include "ContinuousRotateComponent.h"
 #include "SteerComponent.h"
