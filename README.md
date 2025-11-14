@@ -204,7 +204,7 @@ Contributions are welcome! Please ensure:
 
 ## License
 
-*[License information to be added]*
+This project uses MIT license. Please check the License page for more details.
 
 ## Acknowledgments
 
