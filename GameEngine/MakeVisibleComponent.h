@@ -1,9 +1,9 @@
 #pragma once
 #include "Component.h"
-class MakeVisableComponent : public Component
+class MakeVisibleComponent : public Component
 {
 public:
-    MakeVisableComponent(int controlKey, int updateOrder = 100);
+    MakeVisibleComponent(int controlKey, int updateOrder = 100);
 
     virtual void initialize() override;
 

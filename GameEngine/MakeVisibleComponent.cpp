@@ -1,22 +1,22 @@
-#include "MakeVisableComponent.h"
+#include "MakeVisibleComponent.h"
 
 
-MakeVisableComponent::MakeVisableComponent(int controlKey, int updateOrder)
+MakeVisibleComponent::MakeVisibleComponent(int controlKey, int updateOrder)
 	: Component(updateOrder), controlKey(controlKey)
 {
 
 }
 
-void MakeVisableComponent::initialize()
+void MakeVisibleComponent::initialize()
 {
 	owningGameObject->setState(ACTIVE);
 
 }
-void MakeVisableComponent::processInput()
+void MakeVisibleComponent::processInput()
 {
 	if (glfwGetKey(glfwGetCurrentContext(), controlKey) && KeyDown == false) {
 
-		owningGameObject->setState(owningGameObject->getState() == ACTIVE ? PAUSED : ACTIVE); 
+		owningGameObject->setState(owningGameObject->getState() == ACTIVE ? PAUSED : ACTIVE);
 
 		KeyDown = true;
 
