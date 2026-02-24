@@ -48,7 +48,7 @@ A custom C++ game engine featuring an interactive 3D solar system simulation wit
 - **GLEW**: OpenGL extension loading
 - **GLM**: Vector and matrix mathematics
 - **OpenAL**: 3D audio engine
-- **ALUT**: OpenAL Utility Toolkit
+- **ALUT (FreeALUT)**: OpenAL Utility Toolkit (provided by `freealut` in vcpkg manifest mode)
 - **Assimp**: 3D model loading (.obj, .3ds, .fbx formats)
 
 ## CI/CD Pipeline
@@ -104,6 +104,7 @@ cd vcpkg
 ./vcpkg install glm:x64-windows
 ./vcpkg install openal-soft:x64-windows
 ./vcpkg install assimp:x64-windows
+./vcpkg install freealut:x64-windows
 
 # Integrate with Visual Studio
 ./vcpkg integrate install
