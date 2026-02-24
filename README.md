@@ -44,12 +44,13 @@ A custom C++ game engine featuring an interactive 3D solar system simulation wit
 - **Math**: GLM (OpenGL Mathematics) library
 
 ### External Dependencies
-- **GLFW 3**: Window management and input handling
-- **GLEW**: OpenGL extension loading
-- **GLM**: Vector and matrix mathematics
-- **OpenAL**: 3D audio engine
-- **ALUT**: OpenAL Utility Toolkit
-- **Assimp**: 3D model loading (.obj, .3ds, .fbx formats)
+- **GLFW 3.3+**: Window management and input handling
+- **GLEW 2.1+**: OpenGL extension loading for the OpenGL 4.5 rendering pipeline
+- **GLM 0.9.9+**: Vector and matrix mathematics
+- **OpenAL Soft 1.21+**: 3D audio engine
+- **Assimp 5.0+**: 3D model loading (.obj, .3ds, .fbx formats)
+
+> Note: The project depends on OpenAL Soft directly. ALUT is **not** required by the current manifest.
 
 ## CI/CD Pipeline
 
@@ -78,7 +79,9 @@ Artifacts are retained for 30 days.
 
 ### Dependencies Management
 
-The pipeline uses vcpkg for automated dependency management, ensuring consistent builds across all environments. All dependencies from `vcpkg.json` are automatically installed during the build process.
+The pipeline uses vcpkg manifest mode for automated dependency management, ensuring consistent builds across all environments. All dependencies from `vcpkg.json` are installed with a single manifest install command (`vcpkg install`) during the build process.
+
+Minimum dependency versions are declared in `vcpkg.json`, and exact resolved versions are controlled by the manifest baseline (`builtin-baseline`) plus the pinned vcpkg toolchain/registry commit used in CI.
 
 ## Building the Project
 
@@ -98,16 +101,15 @@ git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 ./bootstrap-vcpkg.bat
 
-# Install dependencies
-./vcpkg install glfw3:x64-windows
-./vcpkg install glew:x64-windows
-./vcpkg install glm:x64-windows
-./vcpkg install openal-soft:x64-windows
-./vcpkg install assimp:x64-windows
+# From the repository root (where vcpkg.json lives), install manifest dependencies
+cd <path-to>/tranquhProject3
+<path-to>/vcpkg/vcpkg install --triplet x64-windows
 
 # Integrate with Visual Studio
-./vcpkg integrate install
+<path-to>/vcpkg/vcpkg integrate install
 ```
+
+This manifest workflow installs the dependency set declared in `vcpkg.json` (GLFW, GLEW, GLM, OpenAL Soft, Assimp) instead of requiring per-package install commands.
 
 **Manual Installation:**
 If you prefer manual installation, download and install each library, then configure the include and library paths in Visual Studio project settings.
@@ -205,7 +207,7 @@ High-quality 2K resolution planet textures:
 
 2. **Audio Copyright**: Some audio files are copyrighted music. Replace with royalty-free audio for legal distribution.
 
-3. **OpenAL Configuration**: You may need to modify OpenAL include paths depending on your installation. See `SoundEngine.h` lines 10-13 for details.
+3. **OpenAL Configuration**: With vcpkg manifest integration enabled (`vcpkg integrate install`), OpenAL include/library paths are provided automatically. Manual include-path edits are generally unnecessary.
 
 4. **Platform Support**: Currently Windows-only. Cross-platform support would require CMake build system.
 
