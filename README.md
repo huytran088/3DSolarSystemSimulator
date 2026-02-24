@@ -101,9 +101,13 @@ git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 ./bootstrap-vcpkg.bat
 
-# From the repository root (where vcpkg.json lives), install manifest dependencies
-cd <path-to>/tranquhProject3
-<path-to>/vcpkg/vcpkg install --triplet x64-windows
+# Install dependencies
+./vcpkg install glfw3:x64-windows
+./vcpkg install glew:x64-windows
+./vcpkg install glm:x64-windows
+./vcpkg install openal-soft:x64-windows
+./vcpkg install assimp:x64-windows
+./vcpkg install freealut:x64-windows
 
 # Integrate with Visual Studio
 <path-to>/vcpkg/vcpkg integrate install

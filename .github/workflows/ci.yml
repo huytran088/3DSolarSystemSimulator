@@ -136,8 +136,20 @@ jobs:
         find_package(GLEW REQUIRED)
         find_package(glm CONFIG REQUIRED)
         find_package(OpenAL CONFIG REQUIRED)
+        find_package(freealut CONFIG REQUIRED)
         find_package(assimp CONFIG REQUIRED)
         find_package(OpenGL REQUIRED)
+
+        set(ALUT_LINK_TARGET "")
+        if (TARGET freealut::freealut)
+          set(ALUT_LINK_TARGET freealut::freealut)
+        elseif (TARGET ALUT::ALUT)
+          set(ALUT_LINK_TARGET ALUT::ALUT)
+        elseif (TARGET alut::alut)
+          set(ALUT_LINK_TARGET alut::alut)
+        else()
+          message(FATAL_ERROR "Unable to determine ALUT imported target from freealut package")
+        endif()
 
         # Collect all source files
         file(GLOB_RECURSE SOURCES
@@ -163,6 +175,7 @@ jobs:
           GLEW::GLEW
           glm::glm
           OpenAL::OpenAL
+          ${ALUT_LINK_TARGET}
           assimp::assimp
           OpenGL::GL
           ${CMAKE_DL_LIBS}
